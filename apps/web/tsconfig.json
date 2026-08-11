@@ -1,0 +1,26 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "allowJs": false,
+    "baseUrl": ".",
+    "jsx": "preserve",
+    "incremental": true,
+    "isolatedModules": true,
+    "lib": ["dom", "dom.iterable", "es2022"],
+    "noEmit": true,
+    "paths": {
+      "@life-os/domain/*": ["../../packages/domain/src/*"],
+      "@life-os/db/*": ["../../packages/db/src/*"],
+      "@life-os/ui/*": ["../../packages/ui/src/*"],
+      "@life-os/agents/*": ["../../packages/agents/src/*"],
+      "@life-os/config/*": ["../../packages/config/src/*"]
+    },
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ]
+  },
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "exclude": ["node_modules"]
+}

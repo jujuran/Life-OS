@@ -1,0 +1,29 @@
+{
+  "name": "life-os-platform",
+  "private": true,
+  "version": "0.1.0",
+  "packageManager": "pnpm@10.33.0",
+  "description": "A local-first, privacy-conscious personal life system.",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jujuran/Life-OS.git"
+  },
+  "engines": {
+    "node": ">=20.9.0",
+    "pnpm": "10.33.0"
+  },
+  "devDependencies": {
+    "turbo": "2.9.6"
+  },
+  "scripts": {
+    "build": "turbo run build",
+    "build:web": "turbo run build --filter=@life-os/web",
+    "dev": "turbo run dev",
+    "dev:web": "turbo run dev --filter=@life-os/web",
+    "lint": "turbo run lint",
+    "lint:web": "turbo run lint --filter=@life-os/web",
+    "test": "turbo run test",
+    "check:secrets": "git -c safe.directory=* ls-files -z | node scripts/check-secrets.mjs"
+  }
+}

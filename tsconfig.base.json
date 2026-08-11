@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "strict": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "baseUrl": ".",
+    "paths": {
+      "@life-os/domain/*": ["packages/domain/src/*"],
+      "@life-os/db/*": ["packages/db/src/*"],
+      "@life-os/ui/*": ["packages/ui/src/*"],
+      "@life-os/agents/*": ["packages/agents/src/*"],
+      "@life-os/config/*": ["packages/config/src/*"]
+    }
+  }
+}
