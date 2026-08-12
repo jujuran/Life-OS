@@ -4,6 +4,10 @@ import type {
   ContentTaskInput
 } from "../../../../lib/content-studio-seed.public";
 import { readAiSettingsStore } from "../../../../lib/ai-settings-store";
+import {
+  looksLikeContentJson,
+  parseContentJsonPayload
+} from "../../../../lib/content-output-parser";
 
 export const runtime = "nodejs";
 
@@ -113,38 +117,24 @@ function getSopReviewRules(sopMarkdown: string) {
   );
 }
 
-function extractJson(text: string) {
-  const fenced = text.match(/```(?:json)?\s*([\s\S]*?)\s*```/i);
-
-  if (fenced?.[1]) {
-    return fenced[1];
-  }
-
-  const firstBrace = text.indexOf("{");
-  const lastBrace = text.lastIndexOf("}");
-
-  if (firstBrace >= 0 && lastBrace > firstBrace) {
-    return text.slice(firstBrace, lastBrace + 1);
-  }
-
-  return text;
-}
 
 function normalizeTitles(value: unknown) {
   return Array.isArray(value)
     ? value
         .filter((title): title is string => typeof title === "string")
         .map((title) => title.trim())
-        .filter(Boolean)
+        .filter(
+          (title) =>
+            title.length >= 4 &&
+            title.length <= 42 &&
+            !/[{}\[\]]/.test(title) &&
+            !/^["']?(?:titles|body|tags)["']?\s*:/i.test(title)
+        )
     : [];
 }
 
 function tryParseContentJson(rawText: string): Partial<ContentOutput> | null {
-  try {
-    return JSON.parse(extractJson(rawText)) as Partial<ContentOutput>;
-  } catch {
-    return null;
-  }
+  return parseContentJsonPayload(rawText) as Partial<ContentOutput> | null;
 }
 
 function cleanPlainTextOutput(rawText: string) {
@@ -163,7 +153,13 @@ function plainTextTitleCandidates(rawText: string) {
         .replace(/^[-*#\d.、\s]+/, "")
         .trim()
     )
-    .filter((line) => line.length >= 4 && line.length <= 42)
+    .filter(
+      (line) =>
+        line.length >= 4 &&
+        line.length <= 42 &&
+        !/[{}\[\]]/.test(line) &&
+        !/^["']?(?:titles|body|tags)["']?\s*:/i.test(line)
+    )
     .slice(0, 3);
 }
 
@@ -352,6 +348,9 @@ function ensureThreeTitles(titles: string[], contextText: string, fallbacks: str
 }
 
 function normalizePlainTextOutput(rawText: string): ContentOutput {
+  if (looksLikeContentJson(rawText)) {
+    throw new Error("模型返回的结构化内容不完整，请重试本次生成。");
+  }
   const looseOutput = parseLooseOutput(rawText);
   const rawBody = looseOutput?.body ?? cleanPlainTextOutput(rawText);
 

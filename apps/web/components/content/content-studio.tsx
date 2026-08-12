@@ -13,6 +13,7 @@ import {
   type ContentTaskInput,
   type ContentWritingSop
 } from "../../lib/content-studio-seed.public";
+import { parseContentJsonPayload } from "../../lib/content-output-parser";
 
 type NewProductDraft = {
   name: string;
@@ -261,7 +262,15 @@ function isContentWritingSopList(value: unknown): value is ContentWritingSop[] {
 }
 
 function ensureThreeOutputTitles(titles: string[], body: string) {
-  const cleanTitles = titles.map((title) => title.trim()).filter(Boolean);
+  const cleanTitles = titles
+    .map((title) => title.trim())
+    .filter(
+      (title) =>
+        title.length >= 4 &&
+        title.length <= 42 &&
+        !/[{}\[\]]/.test(title) &&
+        !/^["']?(?:titles|body|tags)["']?\s*:/i.test(title)
+    );
   const seed = cleanTitles[0]?.replace(/[，。！？、；：,.!?;:]+$/g, "").trim() ?? "";
   const contextTitle =
     body
@@ -332,9 +341,20 @@ function normalizePersistedOutput(output: ContentOutput | undefined) {
     return undefined;
   }
 
+  const recovered = parseContentJsonPayload(output.body);
+  const recoveredBody = typeof recovered?.body === "string" ? recovered.body.trim() : output.body;
+  const recoveredTitles = Array.isArray(recovered?.titles)
+    ? recovered.titles.filter((title): title is string => typeof title === "string")
+    : output.titles;
+  const recoveredTags = Array.isArray(recovered?.tags)
+    ? recovered.tags.filter((tag): tag is string => typeof tag === "string")
+    : output.tags;
+
   return {
     ...output,
-    titles: ensureThreeOutputTitles(output.titles, output.body),
+    titles: ensureThreeOutputTitles(recoveredTitles, recoveredBody),
+    body: recoveredBody,
+    tags: recoveredTags,
     stamp: output.stamp.replace("鍒氬垰鐢熸垚 路", "刚刚生成 ·")
   };
 }
