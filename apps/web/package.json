@@ -10,7 +10,7 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "next": "16.2.4",
+    "next": "16.3.2",
     "react": "19.2.5",
     "react-dom": "19.2.5"
   },
