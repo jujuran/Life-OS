@@ -465,6 +465,7 @@ function buildMessages(payload: NormalizedContentPayload): ChatCompletionMessage
   const taskGoal = getString(payload.taskInput.goal);
   const taskTopic = getString(payload.taskInput.topic);
   const referenceText = getString(payload.taskInput.referenceText);
+  const hasExplicitTask = Boolean(taskGoal || taskTopic || referenceText);
   const currentTitle = getString(payload.currentOutput.titles?.[0]);
   const currentTitles = Array.isArray(payload.currentOutput.titles)
     ? payload.currentOutput.titles.join(" / ")
@@ -519,14 +520,18 @@ function buildMessages(payload: NormalizedContentPayload): ChatCompletionMessage
         `写作 SOP：${sopName} ${sopVersion}`,
         "",
         "任务目标：",
-        taskGoal || "写一篇适合目标渠道发布的内容初稿。",
+        taskGoal || "用户未指定。请根据产品档案与 SOP 自主确定一个具体、可发布的写作目标。",
         "",
         "本次选题：",
-        taskTopic || "围绕当前产品生成一个可发布选题。",
+        taskTopic ||
+          "用户未指定。请自主选择一个具体选题，不要把产品档案或 SOP 中的示例措辞直接当作本次选题。",
         "",
         "参考文字：",
         referenceText || "无。",
         "",
+        !hasExplicitTask
+          ? "本次为自主选题模式：请从产品真实使用场景、用户问题、常见误区、方法或选择维度中确定一个具体主题。SOP 中出现的案例仅用于理解写法，不代表用户指定了该主题；不要只因为某个案例或词语出现频率高就反复选择它。"
+          : "",
         "Markdown SOP：",
         scopedSopMarkdown,
         "",
