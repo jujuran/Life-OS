@@ -1433,7 +1433,7 @@ export function ContentStudio() {
                 <input
                   className="field__input"
                   value={taskInput.goal}
-                  placeholder="例如：写一篇适合目标渠道发布的内容初稿"
+                  placeholder="选填：不填写则由 AI 根据产品与 SOP 自主确定"
                   onChange={(event) =>
                     setTaskInput((current) => ({
                       ...current,
@@ -1448,7 +1448,7 @@ export function ContentStudio() {
                 <input
                   className="field__input"
                   value={taskInput.topic}
-                  placeholder="例如：狗拆东西，不是捣乱"
+                  placeholder="选填：不填写则由 AI 自主选择本次方向"
                   onChange={(event) =>
                     setTaskInput((current) => ({
                       ...current,
