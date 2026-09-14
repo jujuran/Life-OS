@@ -105,7 +105,7 @@ const aiPresets: AiPreset[] = [
     label: "DeepSeek",
     provider: "deepseek",
     baseUrl: "https://api.deepseek.com/v1",
-    models: ["deepseek-v4-pro", "deepseek-v4-flash", "deepseek-chat", "deepseek-reasoner"]
+    models: ["deepseek-v4-pro", "deepseek-v4-flash"]
   },
   {
     id: "openai",
@@ -113,6 +113,22 @@ const aiPresets: AiPreset[] = [
     provider: "openai",
     baseUrl: "https://api.openai.com/v1",
     models: ["gpt-4.1", "gpt-4.1-mini", "gpt-4o-mini"]
+  },
+  {
+    id: "gemini",
+    label: "Google Gemini",
+    provider: "openai-compatible",
+    baseUrl: "https://generativelanguage.googleapis.com/v1beta/openai",
+    models: [
+      "gemini-3.8-flash",
+      "gemini-3.7-flash",
+      "gemini-3.6-flash",
+      "gemini-3.5-flash",
+      "gemini-3.5-flash-lite",
+      "gemini-3.1-pro-preview",
+      "gemini-2.5-pro",
+      "gemini-2.5-flash"
+    ]
   },
   {
     id: "xai",
@@ -334,6 +350,10 @@ function detectPresetId(key: {
 
   if (modelText.includes("siliconflow")) {
     return "siliconflow";
+  }
+
+  if (modelText.includes("gemini")) {
+    return "gemini";
   }
 
   if (modelText.includes("openai/") || modelText.includes("anthropic/") || modelText.includes("google/")) {

@@ -64,7 +64,7 @@ function getDefaultBaseUrl(provider: AiProvider) {
 
 function getDefaultModels(provider: AiProvider) {
   if (provider === "deepseek") {
-    return ["deepseek-v4-pro", "deepseek-chat", "deepseek-reasoner"];
+    return ["deepseek-v4-pro", "deepseek-v4-flash"];
   }
 
   if (provider === "openai") {

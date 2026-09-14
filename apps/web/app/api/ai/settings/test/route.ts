@@ -37,6 +37,14 @@ function uniqueModels(models: string[]) {
   return Array.from(new Set(models.map((model) => model.trim()).filter(Boolean)));
 }
 
+function getCurrentProviderModels(provider: AiProvider) {
+  if (provider === "deepseek") {
+    return ["deepseek-v4-pro", "deepseek-v4-flash"];
+  }
+
+  return [];
+}
+
 function collectModelIds(source: unknown) {
   const ids: string[] = [];
   const modelKeys = ["id", "model", "name", "model_id", "modelId", "modelName"];
@@ -135,12 +143,14 @@ export async function POST(request: Request) {
     }
 
     const fetchedModels = collectModelIds(data);
+    const currentProviderModels = getCurrentProviderModels(effectiveSettings.provider);
     const fallbackModels = uniqueModels([
       effectiveSettings.defaultModel,
+      ...currentProviderModels,
       ...effectiveSettings.availableModels
     ]);
     const availableModels = fetchedModels.length
-      ? uniqueModels([effectiveSettings.defaultModel, ...fetchedModels])
+      ? uniqueModels([effectiveSettings.defaultModel, ...currentProviderModels, ...fetchedModels])
       : fallbackModels;
     const message = fetchedModels.length
       ? `连接成功，已读取到 ${fetchedModels.length} 个模型。`
